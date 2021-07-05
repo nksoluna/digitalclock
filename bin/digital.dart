@@ -27,38 +27,42 @@ class Clock {
 
 void main(List<String> arguments) {
   final clocks = Clock(0, 0);
-  String? command = stdin.readLineSync();
-  String? commandnumber = stdin.readLineSync() ?? "nothing in here";
-  List commandList = commandnumber.split(' ');
+  String? command = stdin.readLineSync() ?? "nothing in here";
+  List commandList = command.split(' ');
+  String? afteron;
   var textcommand = commandList[0].toString();
-  var hh = commandList[0].toString();
+  var hh = commandList[1].toString();
   var hour = int.parse(hh);
-  var mm = commandList[1].toString();
+  var mm = commandList[2].toString();
   var minutes = int.parse(mm);
 
+  if (textcommand == 'On') {
+    clocks.turnOn(hour, minutes);
+    clocks.showtime();
+    afteron = stdin.readLineSync();
+  } else {
+    exit(0);
+  }
   do {
-    if (command == 'On') {
-      clocks.turnOn(hour, minutes);
-      clocks.showtime();
-    } else if (command == 'Set') {
+    if (afteron == 'Set') {
       do {
-        command = stdin.readLineSync();
-        if (command == 'inc') {
+        afteron = stdin.readLineSync();
+        if (afteron == 'inc') {
           clocks.inchour();
-        } else if (command == 'Set') {
+        } else if (afteron == 'Set') {
           clocks.showtime();
           break;
         } else {
           print('Wrong command');
         }
-      } while (command != 'Set');
-    } else if (command == 'inc') {
+      } while (afteron != 'Set');
+    } else if (afteron == 'inc') {
       clocks.incmin();
-    } else if (command == 'Show') {
+    } else if (afteron == 'Show') {
       clocks.showtime();
     } else {
       print('Wrong command');
     }
-    command = stdin.readLineSync();
-  } while (command != 'Exit');
+    afteron = stdin.readLineSync();
+  } while (afteron != 'Exit');
 }
