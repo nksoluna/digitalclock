@@ -1,4 +1,3 @@
-import 'package:digital/digital.dart' as digital;
 import 'dart:io';
 
 class Clock {
@@ -27,7 +26,7 @@ class Clock {
 
 void main(List<String> arguments) {
   final clocks = Clock(0, 0);
-  String? command = stdin.readLineSync() ?? "nothing in here";
+  String? command = stdin.readLineSync() ?? 'nothing in here';
   List commandList = command.split(' ');
   String? afteron;
   var textcommand = commandList[0].toString();
@@ -36,30 +35,32 @@ void main(List<String> arguments) {
   var mm = commandList[2].toString();
   var minutes = int.parse(mm);
 
-  if (textcommand == 'On') {
+  if (textcommand == 'on') {
     clocks.turnOn(hour, minutes);
     clocks.showtime();
     afteron = stdin.readLineSync();
+  } else {
+    throw (exit(0));
   }
   do {
-    if (afteron == 'Set') {
+    if (afteron == 'set') {
       do {
         afteron = stdin.readLineSync();
         if (afteron == 'inc') {
           clocks.inchour();
-        } else if (afteron == 'Set') {
+        } else if (afteron == 'set') {
           break;
         } else {
           print('Wrong command');
         }
-      } while (afteron != 'Set');
+      } while (afteron != 'set');
     } else if (afteron == 'inc') {
       clocks.incmin();
-    } else if (afteron == 'Show') {
+    } else if (afteron == 'show') {
       clocks.showtime();
     } else {
       print('Wrong command');
     }
     afteron = stdin.readLineSync();
-  } while (afteron != 'Exit');
+  } while (afteron != 'exit');
 }
