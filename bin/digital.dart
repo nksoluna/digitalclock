@@ -39,8 +39,13 @@ void main(List<String> arguments) {
         if (command == 'inc') {
           clocks.inchour();
           clocks.showtime();
+        } else if (command != 'Set') {
+          break;
         }
       } while (command != 'Set');
+    } else if (command == 'inc') {
+      clocks.incmin();
+      clocks.showtime();
     } else if (command == 'Show') {
       clocks.showtime();
     }
