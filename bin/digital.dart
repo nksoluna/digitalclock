@@ -40,8 +40,6 @@ void main(List<String> arguments) {
     clocks.turnOn(hour, minutes);
     clocks.showtime();
     afteron = stdin.readLineSync();
-  } else {
-    exit(0);
   }
   do {
     if (afteron == 'Set') {
@@ -50,7 +48,6 @@ void main(List<String> arguments) {
         if (afteron == 'inc') {
           clocks.inchour();
         } else if (afteron == 'Set') {
-          clocks.showtime();
           break;
         } else {
           print('Wrong command');
