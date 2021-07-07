@@ -118,13 +118,14 @@ void main(List<String> arguments) {
     exit(0);
   }
   do {
-    switch (afteron) {
-      case 'inc':
-        clocks.increment();
-        break;
-      case 'set':
-        clocks.settonext();
+    if (afteron == 'inc') {
+      clocks.increment();
+    } else if (afteron == 'set') {
+      clocks.settonext();
+    } else {
+      print('Wrong Command');
     }
+
     afteron = stdin.readLineSync();
   } while (afteron != 'exit');
 
