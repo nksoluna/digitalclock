@@ -1,31 +1,106 @@
 import 'dart:io';
 
 class Clock {
+  final Context state;
   int hh;
   int mm;
 
-  Clock(this.hh, this.mm);
+  Clock(this.state, this.hh, this.mm) {
+    state.clock = this;
+  }
 
   void turnOn(int inhh, int inmm) {
     hh = inhh;
     mm = inmm;
   }
 
-  void showtime() {
-    print('the time is [$hh : $mm]');
+  @override
+  String toString() {
+    return 'the time is [$hh : $mm]';
   }
 
-  void inchour() {
-    hh = (hh + 1) % 24;
+  void increment() {
+    state.current.increment(state);
   }
 
-  void incmin() {
-    mm = (mm + 1) % 60;
+  void settonext() {
+    state.nextState();
+  }
+}
+
+class Context {
+  State current;
+  Clock? clock;
+
+  Context(this.current);
+
+  void nextState() {
+    current.nextState(this);
+  }
+
+  void setState(State next) {
+    current = next;
+  }
+}
+
+abstract class State {
+  void nextState(Context state);
+  void increment(Context state);
+  String getName();
+}
+
+class IdleState implements State {
+  @override
+  void nextState(Context state) {
+    state.setState(HourState());
+  }
+
+  @override
+  void increment(Context context) {}
+
+  @override
+  String getName() {
+    return 'Idle';
+  }
+}
+
+class HourState implements State {
+  @override
+  void nextState(Context state) {
+    state.setState(MinState());
+  }
+
+  @override
+  void increment(Context state) {
+    state.clock!.hh = (state.clock!.hh + 1) % 24;
+  }
+
+  @override
+  String getName() {
+    return 'Set hour';
+  }
+}
+
+class MinState implements State {
+  @override
+  void nextState(Context state) {
+    state.setState(IdleState());
+  }
+
+  @override
+  void increment(Context state) {
+    state.clock!.mm = (state.clock!.mm + 1) % 60;
+  }
+
+  @override
+  String getName() {
+    return 'Set min';
   }
 }
 
 void main(List<String> arguments) {
-  final clocks = Clock(0, 0);
+  var state = Context(IdleState());
+  final clocks = Clock(state, 0, 0);
   String? command = stdin.readLineSync() ?? 'nothing in here';
   List commandList = command.split(' ');
   String? afteron;
@@ -37,30 +112,22 @@ void main(List<String> arguments) {
 
   if (textcommand == 'on') {
     clocks.turnOn(hour, minutes);
-    clocks.showtime();
+    print(clocks);
     afteron = stdin.readLineSync();
   } else {
-    throw (exit(0));
+    exit(0);
   }
   do {
-    if (afteron == 'set') {
-      do {
-        afteron = stdin.readLineSync();
-        if (afteron == 'inc') {
-          clocks.inchour();
-        } else if (afteron == 'set') {
-          break;
-        } else {
-          print('Wrong command');
-        }
-      } while (afteron != 'set');
-    } else if (afteron == 'inc') {
-      clocks.incmin();
-    } else if (afteron == 'show') {
-      clocks.showtime();
-    } else {
-      print('Wrong command');
+    switch (afteron) {
+      case 'inc':
+        clocks.increment();
+        break;
+      case 'set':
+        clocks.settonext();
     }
     afteron = stdin.readLineSync();
   } while (afteron != 'exit');
+
+  print(clocks);
+  print('state = ${state.current.getName()}');
 }
